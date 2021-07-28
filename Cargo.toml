@@ -1,6 +1,6 @@
 [package]
 name = "arguments-parser"
-version = "0.1.0"
+version = "0.1.2"
 authors = ["Kamil Pawlaczyk <prgmr.kamil.pawlaczyk@gmail.com>"]
 edition = "2018"
 
