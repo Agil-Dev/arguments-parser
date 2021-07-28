@@ -1,5 +1,23 @@
 use std::collections::HashMap;
 
+
+fn cut_last_char(s: &str) -> &str {
+    let mut chars = s.chars();
+    chars.next_back();
+    chars.as_str()
+}
+fn cut_first_char(s: &str) -> &str {
+    let mut chars = s.chars();
+    chars.next();
+    chars.as_str()
+}
+fn get_arg_value(args: Vec<String>, key: &str) -> String {
+    match args.iter().position(|n| format!("-{}", key).eq(n)) {
+        Some(v) => args[v+1].to_string(),
+        None => "".to_string(),
+    }
+}
+
 pub struct Args {
     strings: HashMap<String, String>,
     bools:   HashMap<String, bool>,
@@ -8,52 +26,70 @@ pub struct Args {
 
 impl Args {
     pub fn new(schema: &str, args: Vec<String>) -> Args{
-        let mut strings: HashMap<String, String> = HashMap::new();
-        let mut bools: HashMap<String, bool>   = HashMap::new();
-        let mut ints: HashMap<String, i32>     = HashMap::new();
-        
-        let split = schema.split(",");
-
-        for s in split {
-            match s.chars().last().unwrap() {
-                '#' => {
-                    let mut chars = s.chars();
-                    chars.next_back();
-                    ints.insert(chars.as_str().to_string(), 0);
-                },
-                '*' => {
-                    let mut chars = s.chars();
-                    chars.next_back();
-                    strings.insert(chars.as_str().to_string(), String::new());
-                },
-                _ => { bools.insert(s.to_string(), false); },
-            }
-        }
-        
-        for key in ints.clone().keys(){
-            match args.iter().position(|n| format!("-{}", key).eq(n)) {
-                Some(v) => { ints.insert(key.to_string(), args[v+1].parse::<i32>().unwrap()); },
-                None => {},
-            }
-        }
-
-        for key in bools.clone().keys(){
-            match args.iter().position(|n| format!("-{}", key).eq(n)) {
-                Some(_) => { bools.insert(key.to_string(), true); },
-                None => {},
-            }
-        }
-
-        for key in strings.clone().keys(){
-            match args.iter().position(|n| format!("-{}", key).eq(n)) {
-                Some(v) => { strings.insert(key.to_string(), args[v+1].clone()); },
-                None => {},
-            }
-        }
-
-        Args {strings: strings, bools: bools, ints: ints}
+        let mut self_ = Args {
+            strings: HashMap::new(), 
+            bools: HashMap::new(), 
+            ints: HashMap::new(),
+        };
+        self_.implement_shema(schema);
+        self_.parse_arguments(args);
+        self_
     }
 
+    fn implement_shema(&mut self, schema: &str) {
+        for s in schema.split(",") {
+            match s.chars().last().unwrap() {
+                '#' => { &self.ints.insert(cut_last_char(s).to_string(), 0); },
+                '*' => { &self.strings.insert(cut_last_char(s).to_string(), String::new()); },
+                _ => { &self.bools.insert(s.to_string(), false); },
+            }
+        }
+    }
+
+    fn parse_arguments(&mut self, args: Vec<String>) {
+        let args_ = args.clone();
+        for mut arg in args {
+            arg = cut_first_char(arg.as_str()).to_string();
+            if self.is_bool(&arg) { 
+                &self.bools.insert(
+                    arg.clone(), 
+                    true
+                ); 
+            } else if self.is_i32(&arg) { 
+                &self.ints
+                .insert(
+                    arg.clone(), 
+                    get_arg_value(args_.clone(), &arg.clone()).parse::<i32>().unwrap()
+                ); 
+            } else if self.is_str(&arg) { 
+                &self.strings.insert(
+                    arg.clone(), 
+                    get_arg_value(args_.clone(), &arg.clone()).to_string()
+                ); 
+            }
+        }
+    }
+
+    pub fn is_bool(&self, key: &str) -> bool{
+        match &self.clone().bools.keys().into_iter().find(|k| k.as_str() == key) {
+            Some(_) => true,
+            None => false,
+        }
+    }    
+    pub fn is_i32(&self, key: &str) -> bool{
+        match &self.clone().ints.keys().into_iter().find(|k| k.as_str() == key) {
+            Some(_) => true,
+            None => false,
+        }
+    }
+    pub fn is_str(&self, key: &str) -> bool{
+        match &self.clone().strings.keys().into_iter().find(|k| k.as_str() == key) {
+            Some(_) => true,
+            None => false,
+        }
+    }
+    
+    
     pub fn get_i32(&self, name: &str) -> i32{
         match &self.ints.get(name) {
             Some(v) => **v,
@@ -73,3 +109,4 @@ impl Args {
         }
     }
 }
+
