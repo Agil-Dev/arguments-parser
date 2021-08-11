@@ -1,17 +1,25 @@
+mod utils;
+
+use utils::*;
 use std::collections::HashMap;
 
-
-fn cut_last_char(s: &str) -> &str {
+pub fn is_some<T>(opt: Option<T>) -> bool{
+    match opt {
+        Some(_) => true,
+        None => false,
+    }
+}
+pub fn cut_last_char(s: &str) -> &str {
     let mut chars = s.chars();
     chars.next_back();
     chars.as_str()
 }
-fn cut_first_char(s: &str) -> &str {
+pub fn cut_first_char(s: &str) -> &str {
     let mut chars = s.chars();
     chars.next();
     chars.as_str()
 }
-fn get_arg_value(args: Vec<String>, key: &str) -> String {
+pub fn get_arg_value(args: Vec<String>, key: &str) -> String {
     match args.iter().position(|n| format!("-{}", key).eq(n)) {
         Some(v) => args[v+1].to_string(),
         None => "".to_string(),
@@ -52,41 +60,47 @@ impl Args {
             arg = cut_first_char(arg.as_str()).to_string();
             if self.is_bool(&arg) { 
                 &self.bools.insert(
-                    arg.clone(), 
+                    arg, 
                     true
                 ); 
             } else if self.is_i32(&arg) { 
                 &self.ints
                 .insert(
                     arg.clone(), 
-                    get_arg_value(args_.clone(), &arg.clone()).parse::<i32>().unwrap()
+                    get_arg_value(
+                        args_.clone(), 
+                        &arg.clone()
+                    ).parse::<i32>().unwrap()
                 ); 
             } else if self.is_str(&arg) { 
                 &self.strings.insert(
                     arg.clone(), 
-                    get_arg_value(args_.clone(), &arg.clone()).to_string()
+                    get_arg_value(
+                        args_.clone(), 
+                        &arg.clone()
+                    ).to_string()
                 ); 
             }
         }
     }
 
     pub fn is_bool(&self, key: &str) -> bool{
-        match &self.clone().bools.keys().into_iter().find(|k| k.as_str() == key) {
-            Some(_) => true,
-            None => false,
-        }
+        is_some(
+            self.clone().bools
+            .keys().into_iter()
+            .find(|k| k.as_str() == key))
     }    
     pub fn is_i32(&self, key: &str) -> bool{
-        match &self.clone().ints.keys().into_iter().find(|k| k.as_str() == key) {
-            Some(_) => true,
-            None => false,
-        }
+        is_some(
+            self.clone().ints
+            .keys().into_iter()
+            .find(|k| k.as_str() == key))
     }
     pub fn is_str(&self, key: &str) -> bool{
-        match &self.clone().strings.keys().into_iter().find(|k| k.as_str() == key) {
-            Some(_) => true,
-            None => false,
-        }
+        is_some(
+            self.clone().strings
+            .keys().into_iter()
+            .find(|k| k.as_str() == key))
     }
     
     
