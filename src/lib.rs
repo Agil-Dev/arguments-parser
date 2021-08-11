@@ -33,9 +33,16 @@ mod lib_tests {
     }
 
     #[test]
-    fn try_get_i32() {
+    fn try_get_i32_when_input_is_correct() {
         let arg = Args::new("i#", vec![
             String::from("-i"), String::from("1")]);
+        assert_eq!(arg.get_i32("i"), 1);
+    }
+
+    #[test]
+    fn try_get_i32_when_input_is_incorrect() {
+        let arg = Args::new("i#", vec![
+            String::from("-i"), String::from("abc")]);
         assert_eq!(arg.get_i32("i"), 1);
     }
 
