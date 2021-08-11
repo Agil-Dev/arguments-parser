@@ -23,3 +23,56 @@ pub fn get_arg_value(args: Vec<String>, key: &str) -> String {
         None => "".to_string(),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn try_cut_last_char() { 
+        let val = "abcd";
+        assert_eq!(
+            cut_last_char(val),
+            "abc"
+        );
+    }
+    #[test]
+    fn try_cut_first_char() { 
+        let val = "abcd";
+        assert_eq!(
+            cut_first_char(val),
+            "bcd"
+        );
+    }
+    #[test]
+    fn check_is_some_option() {
+        let opt = Some(0);
+        assert!(is_some(opt));
+    }
+    #[test]
+    fn check_is_some_none() {
+        let opt = None::<i32>;
+        assert!(!is_some(opt));
+    }
+    #[test]
+    fn try_get_arg_value_which_exist(){
+        let vec = vec![
+            "-a".to_string(), "0".to_string(), 
+            "-b".to_string(), "1".to_string(), 
+            "-c".to_string()
+        ];
+        assert_eq!(get_arg_value(vec.clone(), "a").as_str(), "0");
+        assert_eq!(get_arg_value(vec.clone(), "b").as_str(), "1");
+    }
+    #[test]
+    fn try_get_arg_value_which_does_not_exist(){
+        let vec = vec![
+            "-a".to_string(), "0".to_string(), 
+            "-b".to_string(), "1".to_string(), 
+            "-c".to_string()
+        ];
+        assert_eq!(get_arg_value(vec.clone(), "a").as_str(), "0");
+        assert_eq!(get_arg_value(vec.clone(), "b").as_str(), "1");
+        assert_eq!(get_arg_value(vec.clone(), "c"), "");
+    }
+}
