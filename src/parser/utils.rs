@@ -19,7 +19,11 @@ pub fn cut_first_char(s: &str) -> &str {
 
 pub fn get_arg_value(args: Vec<String>, key: &str) -> String {
     match args.iter().position(|n| format!("-{}", key).eq(n)) {
-        Some(v) => args[v+1].to_string(),
+        Some(v) => if args.len() > v+1 { 
+            args[v+1].to_string() 
+        } else { 
+            "".to_string() 
+        },
         None => "".to_string(),
     }
 }
