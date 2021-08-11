@@ -7,6 +7,15 @@ mod lib_tests {
     use super::*;
 
     #[test]
+    fn use_new_for_invalid_args() {
+        Args::new("i#,s*,b", vec![
+            String::from("-i"), String::from("abc"), 
+            String::from("-s"), String::from("000"),
+            String::from("-b")]
+        );
+    }
+
+    #[test]
     fn check_is_argument_bool() { 
         let arg = Args::new("b", vec![
             String::from("-b")]);
