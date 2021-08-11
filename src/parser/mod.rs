@@ -44,10 +44,13 @@ impl Args {
                 &self.ints
                 .insert(
                     arg.clone(), 
-                    get_arg_value(
+                    match get_arg_value(
                         args_.clone(), 
                         &arg.clone()
-                    ).parse::<i32>().unwrap()
+                    ).parse::<i32>() {
+                        Ok(v) => v,
+                        Err(_) => 0
+                    }
                 ); 
             } else if self.is_str(&arg) { 
                 &self.strings.insert(
