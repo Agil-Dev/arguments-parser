@@ -3,7 +3,7 @@ mod parser;
 pub use parser::Args;
 
 #[cfg(test)]
-mod tests {
+mod lib_tests {
     use super::*;
 
     #[test]
