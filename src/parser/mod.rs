@@ -23,14 +23,18 @@ impl Args {
 
     fn implement_shema(&mut self, schema: &str) {
         for s in schema.split(",") {
-            match s.chars().last().unwrap() {
-                '#' => { &self.ints.insert(cut_last_char(s).to_string(), 0); },
-                '*' => { &self.strings.insert(cut_last_char(s).to_string(), String::new()); },
-                _ => { &self.bools.insert(s.to_string(), false); },
+            match s.chars().last() {
+                Some(chr) => match chr {
+                    '#' => { &self.ints.insert(cut_last_char(s).to_string(), 0); },
+                    '*' => { &self.strings.insert(cut_last_char(s).to_string(), String::new()); },
+                    _ => { &self.bools.insert(s.to_string(), false); },
+                },
+                None => panic!("Invaild args schema")
             }
         }
     }
 
+    // #syf
     fn parse_arguments(&mut self, args: Vec<String>) {
         let args_ = args.clone();
         for mut arg in args {
