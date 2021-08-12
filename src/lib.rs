@@ -16,6 +16,16 @@ mod lib_tests {
     }
 
     #[test]
+    #[should_panic(expected = "Invaild args schema")]
+    fn use_new_for_invalid_schema() {
+        Args::new("#$fffD..d./sd/s,,deid,,.,", vec![
+            String::from("-i"), String::from("1"), 
+            String::from("-s"), String::from("abc"),
+            String::from("-b")]
+        );
+    }
+
+    #[test]
     fn check_is_argument_bool() { 
         let arg = Args::new("b", vec![
             String::from("-b")]);
