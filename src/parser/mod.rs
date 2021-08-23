@@ -34,7 +34,6 @@ impl Args {
         }
     }
 
-    // #syf
     fn parse_arguments(&mut self, args: Vec<String>) {
         let args_ = args.clone();
         for mut arg in args {
