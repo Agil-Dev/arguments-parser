@@ -67,23 +67,21 @@ impl Args {
         }
     }
 
-    pub fn is_bool(&self, key: &str) -> bool{
+    fn is_type<T>(&self, key: &str, map: HashMap<String, T>) -> bool{
         is_some(
-            self.clone().bools
-            .keys().into_iter()
-            .find(|k| k.as_str() == key))
-    }    
-    pub fn is_i32(&self, key: &str) -> bool{
-        is_some(
-            self.clone().ints
-            .keys().into_iter()
+            map.keys().into_iter()
             .find(|k| k.as_str() == key))
     }
+
+    pub fn is_bool(&self, key: &str) -> bool{
+        self.is_type(key, self.bools.clone())
+    }
+    pub fn is_i32(&self, key: &str) -> bool{
+        self.is_type(key, self.ints.clone())
+
+    }
     pub fn is_str(&self, key: &str) -> bool{
-        is_some(
-            self.clone().strings
-            .keys().into_iter()
-            .find(|k| k.as_str() == key))
+        self.is_type(key, self.strings.clone())
     }
     
     pub fn get_i32(&self, name: &str) -> i32{
